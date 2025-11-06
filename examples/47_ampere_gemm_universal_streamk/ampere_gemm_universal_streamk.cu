@@ -155,7 +155,7 @@ using DeviceGemmReference = cutlass::reference::device::Gemm<
   ElementAccumulator>;
 
 // Classic data-parallel device GEMM implementation type
-using DeviceGemmBasic = cutlass::gemm::device::GemmUniversal<
+using DeviceGemmBasic = cutlass::gemm::device::GemmUniversal< // include/cutlass/gemm/device/gemm_universal.h:142 : include/cutlass/gemm/device/gemm_universal_base.h:67
     ElementA, LayoutA,
     ElementB, LayoutB,
     ElementC, LayoutC,
@@ -172,7 +172,7 @@ using DeviceGemmBasic = cutlass::gemm::device::GemmUniversal<
     AlignmentB>;
 
 // StreamK device GEMM implementation type
-using DeviceGemmStreamK = cutlass::gemm::device::GemmUniversal<
+using DeviceGemmStreamK = cutlass::gemm::device::GemmUniversal< // include/cutlass/gemm/device/gemm_universal.h:142 : include/cutlass/gemm/device/gemm_universal_base.h:67
     ElementA, LayoutA,
     ElementB, LayoutB,
     ElementC, LayoutC,
@@ -369,7 +369,7 @@ typename DeviceGemmStreamK::Arguments args_from_options(
 
 
 /// Execute a given example GEMM computation
-template <typename DeviceGemmT>
+template <typename DeviceGemmT> // include/cutlass/gemm/device/gemm_universal.h:142 : include/cutlass/gemm/device/gemm_universal_base.h:67
 Result run(std::string description, Options &options)
 {
   // Display test description
@@ -380,7 +380,7 @@ Result run(std::string description, Options &options)
   options.tensor_d.sync_device();
 
   // Instantiate CUTLASS kernel depending on templates
-  DeviceGemmT device_gemm;
+  DeviceGemmT device_gemm;  // include/cutlass/gemm/device/gemm_universal.h:142
 
   // Create a structure of gemm kernel arguments suitable for invoking an instance of DeviceGemmT
   auto arguments = args_from_options(device_gemm, options, options.tensor_a, options.tensor_b, options.tensor_c, options.tensor_d);
@@ -393,12 +393,17 @@ Result run(std::string description, Options &options)
 
   // Check the problem size is supported or not
   CUTLASS_CHECK(device_gemm.can_implement(arguments));
-
+                                              // include/cutlass/gemm/device/gemm_universal_base.h:268
+                                              // include/cutlass/gemm/kernel/gemm_universal_streamk.h:548
   // Initialize CUTLASS kernel with arguments and workspace pointer
   CUTLASS_CHECK(device_gemm.initialize(arguments, workspace.get()));
+                                              // include/cutlass/gemm/device/gemm_universal_base.h:398
 
   // Correctness / Warmup iteration
-  CUTLASS_CHECK(device_gemm());
+  CUTLASS_CHECK(device_gemm());               // include/cutlass/gemm/device/gemm_universal_base.h:477
+                                              // include/cutlass/gemm/device/gemm_universal_base.h:431
+                                              // include/cutlass/gemm/kernel/gemm_universal_streamk.h:1152
+                                              // include/cutlass/gemm/kernel/gemm_universal_streamk.h:1003
 
   // Copy output data from CUTLASS and reference kernel to host for comparison
   options.tensor_d.sync_host();

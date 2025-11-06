@@ -42,6 +42,7 @@
 #include "cutlass/conv/conv2d_problem_size.h"
 #include "cutlass/conv/conv3d_problem_size.h"
 #include "cutlass/gemm/threadblock/index_remat.h"
+#include "cutlass/gemm/threadblock/threadblock_swizzle_persistent.h"
 #include "cutlass/gemm/threadblock/threadblock_swizzle_streamk.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

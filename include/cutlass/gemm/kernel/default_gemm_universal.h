@@ -49,6 +49,7 @@
 #include "cutlass/numeric_types.h"
 
 #include "cutlass/gemm/kernel/gemm_universal.h"
+#include "cutlass/gemm/kernel/gemm_universal_persistent.h"
 #include "cutlass/gemm/kernel/gemm_universal_streamk.h"
 #include "cutlass/gemm/kernel/default_gemm.h"
 #include "cutlass/gemm/kernel/default_gemm_complex.h"
@@ -249,6 +250,15 @@ struct DefaultGemmUniversal<
       SwizzleT>
   {};
 
+  /// Universal kernel with PersistentFeature member type
+  template <class SwizzleT>
+  class SelectBase<SwizzleT, typename SwizzleT::PersistentFeature> :
+    public kernel::GemmUniversalPersistent<
+      typename DefaultGemmKernel::Mma,
+      typename DefaultGemmKernel::Epilogue,
+      SwizzleT>
+  {};
+
   /// Universal kernel with StreamkFeature member type
   template <class SwizzleT>
   class SelectBase<SwizzleT, typename SwizzleT::StreamkFeature> :
@@ -369,6 +379,15 @@ struct DefaultGemmUniversal<
   template <class SwizzleT, class Enable = void>
   class SelectBase :
     public kernel::GemmUniversal<
+      typename DefaultGemmKernel::Mma,
+      typename DefaultGemmKernel::Epilogue,
+      SwizzleT>
+  {};
+
+  /// Universal kernel with PersistentFeature member type
+  template <class SwizzleT>
+  class SelectBase<SwizzleT, typename SwizzleT::PersistentFeature> :
+    public kernel::GemmUniversalPersistent<
       typename DefaultGemmKernel::Mma,
       typename DefaultGemmKernel::Epilogue,
       SwizzleT>
