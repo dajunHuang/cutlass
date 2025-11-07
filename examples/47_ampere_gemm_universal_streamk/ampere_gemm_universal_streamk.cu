@@ -48,21 +48,21 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 // A matrix configuration
-using ElementA = float;           // Element type for A matrix operand
+using ElementA = float;                     // Element type for A matrix operand
 using LayoutA = cutlass::layout::RowMajor;  // Layout type for A matrix operand
 constexpr int AlignmentA =
     128 / cutlass::sizeof_bits<ElementA>::value;  // Memory access granularity/alignment of A matrix
                                                   // in units of elements (up to 16 bytes)
 
 // B matrix configuration
-using ElementB = float;           // Element type for B matrix operand
+using ElementB = float;                     // Element type for B matrix operand
 using LayoutB = cutlass::layout::RowMajor;  // Layout type for B matrix operand
 constexpr int AlignmentB =
     128 / cutlass::sizeof_bits<ElementB>::value;  // Memory access granularity/alignment of B matrix
                                                   // in units of elements (up to 16 bytes)
 
 // C/D matrix configuration
-using ElementC = float;           // Element type for C and D matrix operands
+using ElementC = float;                     // Element type for C and D matrix operands
 using LayoutC = cutlass::layout::RowMajor;  // Layout type for C and D matrix operands
 constexpr int AlignmentC =
     128 / cutlass::sizeof_bits<ElementC>::value;  // Memory access granularity/alignment of C/D
@@ -267,7 +267,7 @@ typename DeviceGemmPersistent::Arguments args_from_options(
 template <
     typename DeviceGemmT>  // third_party/cutlass/include/cutlass/gemm/device/gemm_universal.h:142 :
                            // third_party/cutlass/include/cutlass/gemm/device/gemm_universal_base.h:67
-                           Result run(std::string description, Options& options) {
+Result run(std::string description, Options& options) {
     // Display test description
     std::cout << std::endl << description << std::endl;
 
@@ -438,9 +438,9 @@ int main(int argc, const char** argv) {
 
     // Compare basic data-parallel version versus Persistent version using default load-balancing
     // heuristics
-    Result basic_dp = run<DeviceGemmBasic>("Basic data-parallel GEMM", options);
     Result persistent_default =
         run<DeviceGemmPersistent>("Persistent GEMM with default load-balancing", options);
+    Result basic_dp = run<DeviceGemmBasic>("Basic data-parallel GEMM", options);
 
     printf("  Speedup vs Basic-DP: %.3f\n",
            (basic_dp.avg_runtime_ms / persistent_default.avg_runtime_ms));
