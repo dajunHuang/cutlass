@@ -266,8 +266,8 @@ struct GemmUniversalPersistent {
               ptr_D(args.ptr_D),
               device_sms(device_sms),
               sm_occupancy(sm_occupancy),
-              threadblock_count(args.threadblock_count < 0 ? device_sms * sm_occupancy : args.threadblock_count)
-        {
+              threadblock_count(args.threadblock_count <= 0 ? device_sms + args.threadblock_count
+                                                            : args.threadblock_count) {
             // Initialize the block mapping structure
             block_mapping = ThreadblockSwizzle(
                 args.mode, args.problem_size,
@@ -303,7 +303,8 @@ struct GemmUniversalPersistent {
             mode = args.mode;
 
             problem_visitor = typename ProblemVisitor::Params(args.problem_size);
-            threadblock_count = args.threadblock_count < 0 ? device_sms * sm_occupancy : args.threadblock_count;
+            threadblock_count = args.threadblock_count <= 0 ? device_sms + args.threadblock_count
+                                                            : args.threadblock_count;
 
             lda = args.lda;
             ldb = args.ldb;
@@ -465,7 +466,6 @@ struct GemmUniversalPersistent {
         GemmCoord grid_shape = problem_visitor.grid_shape(problem_size);
 
         while (problem_visitor.next_tile()) {
-
             int32_t threadblock_idx = int32_t(problem_visitor.threadblock_idx());
 
             cutlass::gemm::GemmCoord threadblock_offset(
