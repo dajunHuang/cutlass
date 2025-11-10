@@ -50,20 +50,20 @@
 // A matrix configuration
 using ElementA = float;                     // Element type for A matrix operand
 using LayoutA = cutlass::layout::RowMajor;  // Layout type for A matrix operand
-constexpr int AlignmentA = 1;  // Memory access granularity/alignment of A matrix
-                                                  // in units of elements (up to 16 bytes)
+constexpr int AlignmentA = 1;               // Memory access granularity/alignment of A matrix
+                                            // in units of elements (up to 16 bytes)
 
 // B matrix configuration
 using ElementB = float;                     // Element type for B matrix operand
 using LayoutB = cutlass::layout::RowMajor;  // Layout type for B matrix operand
-constexpr int AlignmentB = 1;  // Memory access granularity/alignment of B matrix
-                                                  // in units of elements (up to 16 bytes)
+constexpr int AlignmentB = 1;               // Memory access granularity/alignment of B matrix
+                                            // in units of elements (up to 16 bytes)
 
 // C/D matrix configuration
 using ElementC = float;                     // Element type for C and D matrix operands
 using LayoutC = cutlass::layout::RowMajor;  // Layout type for C and D matrix operands
-constexpr int AlignmentC = 1;  // Memory access granularity/alignment of C/D
-                                                  // matrices in units of elements (up to 16 bytes)
+constexpr int AlignmentC = 1;               // Memory access granularity/alignment of C/D
+                                            // matrices in units of elements (up to 16 bytes)
 
 // Multiply-accumulate blocking/pipelining details
 using ElementAccumulator = float;  // Element type for internal accumulation
@@ -76,7 +76,7 @@ using WarpShape =
     cutlass::gemm::GemmShape<32, 64, 16>;  // Warp-level tile size (concept: GemmShape)
 using InstructionShape =
     cutlass::gemm::GemmShape<1, 1, 1>;  // Instruction-level tile size (concept: GemmShape)
-constexpr int NumStages = 4;  // Number of global->shared pipeline stages used in the GEMM mainloop
+constexpr int NumStages = 3;  // Number of global->shared pipeline stages used in the GEMM mainloop
 
 // Epilogue output operator
 using EpilogueOp = cutlass::epilogue::thread::LinearCombination<
@@ -153,7 +153,7 @@ struct Options {
           alpha(1.0f),
           beta(0.0f),
           split_k_factor(1),
-          avail_sms(-1),  // Number of device SMs to use is unlimited
+          avail_sms(0),
           reference_check(true),
           iterations(25) {}
 
@@ -293,7 +293,10 @@ Result run(std::string description, Options& options) {
     // Initialize CUTLASS kernel with arguments and workspace pointer
     CUTLASS_CHECK(device_gemm.initialize(arguments, workspace.get()));
     // third_party/cutlass/include/cutlass/gemm/device/gemm_universal_base.h:398
-
+    std::cout << "grid shape:(" << device_gemm.get_grid_shape(arguments)
+              << "), shared memory: " << DeviceGemmT::Base::kSharedStorageSize
+              << ", block dim: " << DeviceGemmT::GemmKernel::kThreadCount
+              << ", sm_occupancy: " << device_gemm.params_.sm_occupancy << std::endl;
     // Correctness / Warmup iteration
     CUTLASS_CHECK(
         device_gemm());  // third_party/cutlass/include/cutlass/gemm/device/gemm_universal_base.h:477
@@ -312,15 +315,17 @@ Result run(std::string description, Options& options) {
 
     // Run profiling loop
     if (options.iterations > 0) {
+        float elapsed_ms = 0.0f;
         GpuTimer timer;
-        timer.start();
         for (int iter = 0; iter < options.iterations; ++iter) {
+            timer.start();
             CUTLASS_CHECK(device_gemm());
+            timer.stop();
+            float timer_ms = timer.elapsed_millis();
+            elapsed_ms += timer_ms;
         }
-        timer.stop();
 
         // Compute average runtime and GFLOPs.
-        float elapsed_ms = timer.elapsed_millis();
         result.avg_runtime_ms = double(elapsed_ms) / double(options.iterations);
         result.gflops = options.gflops(result.avg_runtime_ms / 1000.0);
 
