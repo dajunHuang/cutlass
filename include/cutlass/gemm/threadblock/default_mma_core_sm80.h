@@ -2529,8 +2529,8 @@ struct DefaultMmaCore<Shape_, WarpShape_, InstructionShape_, ElementA_,
   static const int LaneM = cutlass::const_min(numElementsA, ThreadTileM);
   static const int LaneN = cutlass::const_min(numElementsB, ThreadTileN);
 
-  static_assert(!((Shape::kK / 32) % LaneM),
-                "Padding must be divisible by Lane");
+//   static_assert(!((Shape::kK / 32) % LaneM),
+//                 "Padding must be divisible by Lane");
 
   // these should have max of thread tile also
   using LaneMmaShape = cutlass::gemm::GemmShape<
@@ -2557,7 +2557,7 @@ struct DefaultMmaCore<Shape_, WarpShape_, InstructionShape_, ElementA_,
   /// Policy used to define MmaPipelined
   using MmaPolicy = MmaPolicy<
     MmaWarpSimt,
-    MatrixShape<Shape::kK / 32, 0>,
+    MatrixShape<round_up(Shape::kK / 32, LaneM), 0>,
     MatrixShape<0, 0>,
     WarpCount::kK>;
 };
