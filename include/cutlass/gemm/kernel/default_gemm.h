@@ -970,9 +970,9 @@ struct DefaultGemm<ElementA,
              "Epilogue in the kernel level must be row major");
 
   /// Define the threadblock-scoped matrix multiply-accumulate
-  using Mma = typename cutlass::gemm::threadblock::DefaultMma<
-      ElementA, LayoutA, kAlignmentA, ElementB, LayoutB, kAlignmentB,
-      ElementAccumulator, LayoutC, arch::OpClassSimt, arch::Sm80,
+  using Mma = typename cutlass::gemm::threadblock::DefaultMma<  // third_party/cutlass/include/cutlass/gemm/threadblock/default_mma.h:182
+      ElementA, LayoutA, kAlignmentA, ElementB, LayoutB, kAlignmentB, // or
+      ElementAccumulator, LayoutC, arch::OpClassSimt, arch::Sm80,// third_party/cutlass/include/cutlass/gemm/threadblock/default_mma.h:464
       ThreadblockShape, WarpShape, GemmShape<1, 1, 1>, Stages,
       Operator, false, SharedMemoryClear, GatherA, GatherB,
       PermuteALayout, PermuteBLayout>::ThreadblockMma;

@@ -161,6 +161,7 @@ protected:
         cudaFuncAttributeMaxDynamicSharedMemorySize,
         kSharedStorageSize);
       if (cudart_result != cudaSuccess) {
+        std::cout << "Attribute set failed " << kSharedStorageSize << std::endl;
         CUTLASS_TRACE_HOST("  cudaFuncSetAttribute() returned error " << cudaGetErrorString(cudart_result));
         return Status::kErrorInternal;
       }
@@ -174,6 +175,7 @@ protected:
       kSharedStorageSize,
       cudaOccupancyDisableCachingOverride);
     if (cudart_result != cudaSuccess) {
+      std::cout << "occupancy query failed" << std::endl;
       CUTLASS_TRACE_HOST("  cudaOccupancyMaxActiveBlocksPerMultiprocessorWithFlags() returned error " << cudaGetErrorString(cudart_result));
       return Status::kErrorInternal;
     }

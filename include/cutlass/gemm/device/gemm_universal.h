@@ -194,7 +194,7 @@ class GemmUniversal :
   static ComplexTransform const kTransformB = TransformB;
 
   using Base = GemmUniversalBase<
-    typename kernel::DefaultGemmUniversal<
+    typename kernel::DefaultGemmUniversal<  // third_party/cutlass/include/cutlass/gemm/kernel/default_gemm_universal.h:256
       ElementA_,
       LayoutA_,
       TransformA,

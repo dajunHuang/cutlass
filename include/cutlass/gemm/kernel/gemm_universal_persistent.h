@@ -64,8 +64,8 @@ struct GemmUniversalPersistent {
     // Types and constants
     //
 
-    using Mma = Mma_;
-    using Epilogue = Epilogue_;
+    using Mma = Mma_;           // third_party/cutlass/include/cutlass/gemm/kernel/default_gemm.h:973
+    using Epilogue = Epilogue_; // third_party/cutlass/include/cutlass/gemm/kernel/default_gemm.h:1001
     using EpilogueOutputOp = typename Epilogue::OutputOp;
     using ThreadblockSwizzle = ThreadblockSwizzle_;
     static bool const kTransposed = Transposed;

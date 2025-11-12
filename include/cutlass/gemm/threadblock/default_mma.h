@@ -162,7 +162,7 @@ struct DefaultMma<ElementA, LayoutA, kAlignmentA, ElementB, LayoutB,
   using MmaCore = typename cutlass::gemm::threadblock::DefaultMmaCore<
       ThreadblockShape, WarpShape, InstructionShape, ElementA, LayoutA,
       ElementB, LayoutB, ElementAccumulator, LayoutC,
-      arch::OpClassSimt, 2, Operator>;
+      arch::OpClassSimt, 2, Operator>;  // third_party/cutlass/include/cutlass/gemm/threadblock/default_mma_core_simt.h:435
 
   // Define iterators over tiles from the A operand
   using IteratorA =
@@ -182,7 +182,7 @@ struct DefaultMma<ElementA, LayoutA, kAlignmentA, ElementB, LayoutB,
   using ThreadblockMma = cutlass::gemm::threadblock::MmaPipelined<
       typename MmaCore::Shape, IteratorA, typename MmaCore::SmemIteratorA,
       IteratorB, typename MmaCore::SmemIteratorB, ElementAccumulator,
-      LayoutC, typename MmaCore::MmaPolicy>;
+      LayoutC, typename MmaCore::MmaPolicy>;    // third_party/cutlass/include/cutlass/gemm/threadblock/mma_pipelined.h:92
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -442,7 +442,7 @@ struct DefaultMma<ElementA, LayoutA, kAlignmentA, ElementB, LayoutB,
   using MmaCore = typename cutlass::gemm::threadblock::DefaultMmaCore<
       ThreadblockShape, WarpShape, InstructionShape, ElementA, LayoutA,
       ElementB, LayoutB, ElementAccumulator, LayoutC, arch::OpClassSimt,
-      Stages, Operator>;
+      Stages, Operator>;    // third_party/cutlass/include/cutlass/gemm/threadblock/default_mma_core_sm80.h:2439
 
   // Define iterators over tiles from the A operand
   using ThreadMapA = typename MmaCore::IteratorThreadMapA;
@@ -465,7 +465,7 @@ struct DefaultMma<ElementA, LayoutA, kAlignmentA, ElementB, LayoutB,
       typename MmaCore::Shape, IteratorA, typename MmaCore::SmemIteratorA,
       MmaCore::kCacheOpA, IteratorB, typename MmaCore::SmemIteratorB,
       MmaCore::kCacheOpB, ElementAccumulator, LayoutC,
-      typename MmaCore::MmaPolicy, Stages>;
+      typename MmaCore::MmaPolicy, Stages>; // third_party/cutlass/include/cutlass/gemm/threadblock/mma_multistage.h:92
 };
 
 ////////////////////////////////////////////////////////////////////////////////

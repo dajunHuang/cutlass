@@ -212,7 +212,7 @@ struct DefaultGemmUniversal<
   typename platform::enable_if< ! cutlass::is_complex<ElementAccumulator>::value>::type
 > {
 
-  using DefaultGemmKernel = typename kernel::DefaultGemm<
+  using DefaultGemmKernel = typename kernel::DefaultGemm< // third_party/cutlass/include/cutlass/gemm/kernel/default_gemm.h:966
     ElementA,
     LayoutA,
     kAlignmentA,
@@ -253,9 +253,9 @@ struct DefaultGemmUniversal<
   /// Universal kernel with PersistentFeature member type
   template <class SwizzleT>
   class SelectBase<SwizzleT, typename SwizzleT::PersistentFeature> :
-    public kernel::GemmUniversalPersistent<
-      typename DefaultGemmKernel::Mma,
-      typename DefaultGemmKernel::Epilogue,
+    public kernel::GemmUniversalPersistent< // third_party/cutlass/include/cutlass/gemm/kernel/gemm_universal_persistent.h:61
+      typename DefaultGemmKernel::Mma,      // third_party/cutlass/include/cutlass/gemm/kernel/default_gemm.h:973
+      typename DefaultGemmKernel::Epilogue, // third_party/cutlass/include/cutlass/gemm/kernel/default_gemm.h:1001
       SwizzleT>
   {};
 
